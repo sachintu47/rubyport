@@ -1,0 +1,13 @@
+diff --git a/vm.c b/vm.c
+index 21e0d6f..e46855f 100644
+--- a/vm.c
++++ b/vm.c
+@@ -3810,7 +3810,7 @@ static VALUE
+ nsdr(VALUE self)
+ {
+     VALUE ary = rb_ary_new();
+-#ifdef HAVE_BACKTRACE
++#if defined(HAVE_BACKTRACE) && !defined(__MVS__)
+ #include <execinfo.h>
+ #define MAX_NATIVE_TRACE 1024
+     static void *trace[MAX_NATIVE_TRACE];

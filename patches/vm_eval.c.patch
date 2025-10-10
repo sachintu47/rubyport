@@ -1,0 +1,13 @@
+diff --git a/vm_eval.c b/vm_eval.c
+index 74dfd40..bd353fd 100644
+--- a/vm_eval.c
++++ b/vm_eval.c
+@@ -389,7 +389,7 @@ void
+ rb_check_stack_overflow(void)
+ {
+ #ifndef RB_THREAD_LOCAL_SPECIFIER
+-    if (!ruby_current_ec_key) return;
++    if (!ruby_current_ec_key.__) return;
+ #endif
+     rb_execution_context_t *ec = GET_EC();
+     if (ec) stack_check(ec);

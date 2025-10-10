@@ -1,0 +1,22 @@
+diff --git a/iseq.c b/iseq.c
+index 7a2aefa..d81d714 100644
+--- a/iseq.c
++++ b/iseq.c
+@@ -14,7 +14,7 @@
+ 
+ #include "ruby/internal/config.h"
+ 
+-#ifdef HAVE_DLADDR
++#if defined(HAVE_DLADDR) && !defined(__MVS__)
+ # include <dlfcn.h>
+ #endif
+ 
+@@ -2582,7 +2582,7 @@ rb_insn_operand_intern(const rb_iseq_t *iseq,
+ 
+       case TS_FUNCPTR:
+         {
+-#ifdef HAVE_DLADDR
++#if defined(HAVE_DLADDR) && !defined(__MVS__)
+             Dl_info info;
+             if (dladdr((void *)op, &info) && info.dli_sname) {
+                 ret = rb_str_new_cstr(info.dli_sname);

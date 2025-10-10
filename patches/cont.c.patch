@@ -1,0 +1,15 @@
+diff --git a/cont.c b/cont.c
+index eb9a9b4..917286b 100644
+--- a/cont.c
++++ b/cont.c
+@@ -71,6 +71,10 @@ static VALUE rb_cFiberPool;
+ #define FIBER_POOL_ALLOCATION_FREE
+ #endif
+ 
++#ifdef __MVS__
++#define MAP_ANON 0
++#endif
++
+ enum context_type {
+     CONTINUATION_CONTEXT = 0,
+     FIBER_CONTEXT = 1

@@ -1,0 +1,13 @@
+diff --git a/dln.c b/dln.c
+index cd9792c..9463713 100644
+--- a/dln.c
++++ b/dln.c
+@@ -284,7 +284,7 @@ dln_incompatible_func(void *handle, const char *funcname, void *const fp, const
+     void *ex = dlsym(handle, funcname);
+     if (!ex) return false;
+     if (ex == fp) return false;
+-#  if defined(HAVE_DLADDR) && !defined(__CYGWIN__)
++#  if defined(HAVE_DLADDR) && !defined(__CYGWIN__) && !defined(__MVS__)
+     Dl_info dli;
+     if (dladdr(ex, &dli)) {
+         *libname = dli.dli_fname;

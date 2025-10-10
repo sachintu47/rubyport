@@ -1,0 +1,13 @@
+diff --git a/gc/default/default.c b/gc/default/default.c
+index 505d9d6..9fc4020 100644
+--- a/gc/default/default.c
++++ b/gc/default/default.c
+@@ -1859,7 +1859,7 @@ heap_page_body_allocate(void)
+     struct heap_page_body *page_body;
+ 
+     if (HEAP_PAGE_ALLOC_USE_MMAP) {
+-#ifdef HAVE_MMAP
++#if defined(HAVE_MMAP) && !defined(__MVS__)
+         GC_ASSERT(HEAP_PAGE_ALIGN % sysconf(_SC_PAGE_SIZE) == 0);
+ 
+         size_t mmap_size = HEAP_PAGE_ALIGN + HEAP_PAGE_SIZE;

@@ -1,0 +1,12 @@
+diff --git a/rjit.h b/rjit.h
+index 26d1d67..a1f98fd 100644
+--- a/rjit.h
++++ b/rjit.h
+@@ -14,6 +14,7 @@
+ 
+ # if USE_RJIT
+ 
++#error "USE_RJIT"
+ #include "ruby.h"
+ #include "vm_core.h"
+ 

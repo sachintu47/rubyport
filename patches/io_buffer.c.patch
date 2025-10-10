@@ -1,0 +1,16 @@
+diff --git a/io_buffer.c b/io_buffer.c
+index a4b7d30..8e8e816 100644
+--- a/io_buffer.c
++++ b/io_buffer.c
+@@ -37,6 +37,11 @@ size_t RUBY_IO_BUFFER_DEFAULT_SIZE;
+ #include <sys/mman.h>
+ #endif
+ 
++#ifdef __MVS__
++#define MAP_ANONYMOUS 0
++#define MAP_ANON 0
++#endif
++
+ enum {
+     RB_IO_BUFFER_HEXDUMP_DEFAULT_WIDTH = 16,
+ 

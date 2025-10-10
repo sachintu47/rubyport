@@ -1,0 +1,22 @@
+diff --git a/process.c b/process.c
+index 5fbc9be..1dcbee4 100644
+--- a/process.c
++++ b/process.c
+@@ -8594,7 +8594,7 @@ rb_clock_getres(int argc, VALUE *argv, VALUE _)
+     timetick_int_t denominators[2];
+     int num_numerators = 0;
+     int num_denominators = 0;
+-#ifdef HAVE_CLOCK_GETRES
++#if defined(HAVE_CLOCK_GETRES) || defined(__MVS__)
+     clockid_t c;
+ #endif
+ 
+@@ -8697,7 +8697,7 @@ rb_clock_getres(int argc, VALUE *argv, VALUE _)
+ #endif
+     }
+     else if (NUMERIC_CLOCKID) {
+-#if defined(HAVE_CLOCK_GETRES)
++#if defined(HAVE_CLOCK_GETRES) || defined(__MVS__)
+         struct timespec ts;
+         c = NUM2CLOCKID(clk_id);
+       getres:

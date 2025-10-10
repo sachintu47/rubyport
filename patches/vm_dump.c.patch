@@ -1,0 +1,13 @@
+diff --git a/vm_dump.c b/vm_dump.c
+index 99339fd..d90181f 100644
+--- a/vm_dump.c
++++ b/vm_dump.c
+@@ -499,7 +499,7 @@ rb_vmdebug_thread_dump_state(FILE *errout, VALUE self)
+ # endif
+ #endif
+ 
+-#if defined(HAVE_BACKTRACE)
++#if defined(HAVE_BACKTRACE) && !defined(__MVS__)
+ # define USE_BACKTRACE 1
+ # ifdef HAVE_LIBUNWIND
+ #  undef backtrace
