@@ -1,0 +1,36 @@
+diff --git a/addr2line.c b/addr2line.c
+index 21f7f4c..1a38ba9 100644
+--- a/addr2line.c
++++ b/addr2line.c
+@@ -43,6 +43,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
++#include <zos-base.h>
+ 
+ /* Make alloca work the best possible way.  */
+ #ifdef __GNUC__
+@@ -2087,7 +2088,11 @@ fill_lines(int num_traces, void **traces, int check_debuglink,
+ #endif
+     lseek(fd, 0, SEEK_SET);
+     /* async-signal unsafe */
++#ifdef __MVS__
++    file = anon_mmap(NULL, filesize);
++#else
+     file = (char *)mmap(NULL, (size_t)filesize, PROT_READ, MAP_SHARED, fd, 0);
++#endif    
+     if (file == MAP_FAILED) {
+         int e = errno;
+         close(fd);
+@@ -2337,7 +2342,11 @@ fill_lines(int num_traces, void **traces, int check_debuglink,
+ #endif
+     lseek(fd, 0, SEEK_SET);
+     /* async-signal unsafe */
++#ifdef __MVS__
++     file = anon_mmap(NULL, filesize);
++#else
+     file = (char *)mmap(NULL, (size_t)filesize, PROT_READ, MAP_SHARED, fd, 0);
++#endif
+     if (file == MAP_FAILED) {
+         int e = errno;
+         close(fd);

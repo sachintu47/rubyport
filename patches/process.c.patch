@@ -1,5 +1,5 @@
 diff --git a/process.c b/process.c
-index 5fbc9be..1dcbee4 100644
+index 5fbc9be..90c24c4 100644
 --- a/process.c
 +++ b/process.c
 @@ -8594,7 +8594,7 @@ rb_clock_getres(int argc, VALUE *argv, VALUE _)
@@ -11,7 +11,7 @@ index 5fbc9be..1dcbee4 100644
      clockid_t c;
  #endif
  
-@@ -8697,7 +8697,7 @@ rb_clock_getres(int argc, VALUE *argv, VALUE _)
+@@ -8697,11 +8697,12 @@ rb_clock_getres(int argc, VALUE *argv, VALUE _)
  #endif
      }
      else if (NUMERIC_CLOCKID) {
@@ -20,3 +20,9 @@ index 5fbc9be..1dcbee4 100644
          struct timespec ts;
          c = NUM2CLOCKID(clk_id);
        getres:
+-        ret = clock_getres(c, &ts);
++        // ret = clock_getres(c, &ts);
++        ret = -1;
+         if (ret == -1)
+             clock_failed("getres", errno, clk_id);
+         tt.count = (int32_t)ts.tv_nsec;

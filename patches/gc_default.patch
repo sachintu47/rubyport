@@ -1,13 +1,62 @@
 diff --git a/gc/default/default.c b/gc/default/default.c
-index 505d9d6..9fc4020 100644
+index 505d9d6..f7a7fca 100644
 --- a/gc/default/default.c
 +++ b/gc/default/default.c
-@@ -1859,7 +1859,7 @@ heap_page_body_allocate(void)
-     struct heap_page_body *page_body;
+@@ -75,6 +75,8 @@
+ # include <mach/mach_port.h>
+ #endif
  
++#include <zos-base.h>
++
+ #ifndef VM_CHECK_MODE
+ # define VM_CHECK_MODE RUBY_DEBUG
+ #endif
+@@ -1750,7 +1752,11 @@ heap_page_body_free(struct heap_page_body *page_body)
      if (HEAP_PAGE_ALLOC_USE_MMAP) {
--#ifdef HAVE_MMAP
-+#if defined(HAVE_MMAP) && !defined(__MVS__)
+ #ifdef HAVE_MMAP
+         GC_ASSERT(HEAP_PAGE_SIZE % sysconf(_SC_PAGE_SIZE) == 0);
++#ifdef __MVS__
++        if (anon_munmap(page_body, HEAP_PAGE_SIZE)) {
++#else
+         if (munmap(page_body, HEAP_PAGE_SIZE)) {
++#endif
+             rb_bug("heap_page_body_free: munmap failed");
+         }
+ #endif
+@@ -1863,8 +1869,12 @@ heap_page_body_allocate(void)
          GC_ASSERT(HEAP_PAGE_ALIGN % sysconf(_SC_PAGE_SIZE) == 0);
  
          size_t mmap_size = HEAP_PAGE_ALIGN + HEAP_PAGE_SIZE;
++#ifdef __MVS__
++        char* ptr = anon_mmap(NULL, mmap_size);
++#else
+         char *ptr = mmap(NULL, mmap_size,
+                          PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
++#endif
+         if (ptr == MAP_FAILED) {
+             return NULL;
+         }
+@@ -1887,7 +1897,11 @@ heap_page_body_allocate(void)
+         size_t start_out_of_range_size = aligned - ptr;
+         GC_ASSERT(start_out_of_range_size % sysconf(_SC_PAGE_SIZE) == 0);
+         if (start_out_of_range_size > 0) {
++#ifdef __MVS__
++            if (anon_munmap(ptr, start_out_of_range_size)) {
++#else
+             if (munmap(ptr, start_out_of_range_size)) {
++#endif
+                 rb_bug("heap_page_body_allocate: munmap failed for start");
+             }
+         }
+@@ -1895,7 +1909,11 @@ heap_page_body_allocate(void)
+         size_t end_out_of_range_size = HEAP_PAGE_ALIGN - start_out_of_range_size;
+         GC_ASSERT(end_out_of_range_size % sysconf(_SC_PAGE_SIZE) == 0);
+         if (end_out_of_range_size > 0) {
++#ifdef __MVS__
++            if (anon_munmap(aligned + HEAP_PAGE_SIZE, end_out_of_range_size)) {
++#else
+             if (munmap(aligned + HEAP_PAGE_SIZE, end_out_of_range_size)) {
++#endif
+                 rb_bug("heap_page_body_allocate: munmap failed for end");
+             }
+         }

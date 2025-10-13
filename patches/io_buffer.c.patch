@@ -1,16 +1,47 @@
 diff --git a/io_buffer.c b/io_buffer.c
-index a4b7d30..8e8e816 100644
+index a4b7d30..ad119aa 100644
 --- a/io_buffer.c
 +++ b/io_buffer.c
-@@ -37,6 +37,11 @@ size_t RUBY_IO_BUFFER_DEFAULT_SIZE;
+@@ -37,6 +37,8 @@ size_t RUBY_IO_BUFFER_DEFAULT_SIZE;
  #include <sys/mman.h>
  #endif
  
-+#ifdef __MVS__
-+#define MAP_ANONYMOUS 0
-+#define MAP_ANON 0
-+#endif
++#include <zos-base.h>
 +
  enum {
      RB_IO_BUFFER_HEXDUMP_DEFAULT_WIDTH = 16,
  
+@@ -71,7 +73,7 @@ io_buffer_map_memory(size_t size, int flags)
+         rb_sys_fail("io_buffer_map_memory:VirtualAlloc");
+     }
+ #else
+-    int mmap_flags = MAP_ANONYMOUS;
++    int mmap_flags = 0;
+     if (flags & RB_IO_BUFFER_SHARED) {
+         mmap_flags |= MAP_SHARED;
+     }
+@@ -79,7 +81,11 @@ io_buffer_map_memory(size_t size, int flags)
+         mmap_flags |= MAP_PRIVATE;
+     }
+ 
+-    void * base = mmap(NULL, size, PROT_READ | PROT_WRITE, mmap_flags, -1, 0);
++#ifdef __MVS__
++    void* base  = anon_mmap(NULL, size);
++#else
++     void * base = mmap(NULL, size, PROT_READ | PROT_WRITE, mmap_flags, -1, 0);
++#endif
+ 
+     if (base == MAP_FAILED) {
+         rb_sys_fail("io_buffer_map_memory:mmap");
+@@ -152,7 +158,11 @@ io_buffer_map_file(struct rb_io_buffer *buffer, int descriptor, size_t size, rb_
+         access |= MAP_SHARED;
+     }
+ 
++#ifdef __MVS__
++    void* base  = anon_mmap(NULL, size);
++#else
+     void *base = mmap(NULL, size, protect, access, descriptor, offset);
++#endif
+ 
+     if (base == MAP_FAILED) {
+         rb_sys_fail("io_buffer_map_file:mmap");
