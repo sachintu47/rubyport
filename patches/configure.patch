@@ -1,0 +1,23 @@
+diff --git a/configure b/configure
+index 7a391a2..748ee9d 100755
+--- a/configure
++++ b/configure
+@@ -26569,12 +26569,12 @@ then :
+ 
+ fi
+ 
+-ac_fn_c_check_func "$LINENO" "dladdr" "ac_cv_func_dladdr"
+-if test "x$ac_cv_func_dladdr" = xyes
+-then :
+-  printf "%s\n" "#define HAVE_DLADDR 1" >>confdefs.h
+-
+-fi
++#ac_fn_c_check_func "$LINENO" "dladdr" "ac_cv_func_dladdr"
++#if test "x$ac_cv_func_dladdr" = xyes
++#then :
++#  printf "%s\n" "#define HAVE_DLADDR 1" >>confdefs.h
++#
++#fi
+ 
+ ac_fn_c_check_func "$LINENO" "dup3" "ac_cv_func_dup3"
+ if test "x$ac_cv_func_dup3" = xyes
