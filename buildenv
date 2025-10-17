@@ -34,6 +34,7 @@ export ZOPEN_RUNTIME_DEPS=""
 ## Current available prerequisites: zos24 zos25 zos31 procfs (see https://github.com/zopencommunity/meta/blob/main/include/prereq.sh for a current list)
 export ZOPEN_SYSTEM_PREREQ=""
 
+export LD="clang"
 
 ###
 ### Build stage control environment variables
@@ -155,7 +156,7 @@ export ZOPEN_EXTRA_CFLAGS="-D__XPLAT=1 -mzos-target=zosv3r1" ## C compiler flags
 #export ZOPEN_CLEAN_OPTS="" ## Options to pass to clean up  program (defaults to 'clean')
 #export ZOPEN_CONFIGURE_MINIMAL="" ## Configuration program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
 #export ZOPEN_CONFIGURE_OPTS="" ## Options to pass to configuration program (defaults to '--prefix=')
-export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-shared --enable-devel" ## Extra configure options to pass to configuration program. (defaults to '')
+#export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-shared --enable-devel" ## Extra configure options to pass to configuration program. (defaults to '')
 #export ZOPEN_INSTALL_OPTS="" ## Options to pass to installation program (defaults to 'install')
 #export ZOPEN_MAKE_MINIMAL="" ## Build program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
 #export ZOPEN_MAKE_OPTS="" ## Options to pass to build program (defaults to '-j')
