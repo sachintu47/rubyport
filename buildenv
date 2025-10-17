@@ -143,7 +143,7 @@ zopen_get_version()
 ### Optional build control variables
 ###
 
-export ZOPEN_EXTRA_CFLAGS="-D__XPLAT=1 -D_POSIX_C_SOURCE=200809L" ## C compiler flags to append to CFLAGS (defaults to '').
+export ZOPEN_EXTRA_CFLAGS="-D__XPLAT=1 -mzos-target=zosv3r1" ## C compiler flags to append to CFLAGS (defaults to '').
 #export ZOPEN_EXTRA_CPPFLAGS="" ## C,C++ pre-processor flags to append to CPPFLAGS (defaults to '')
 #export ZOPEN_EXTRA_CXXFLAGS="" ## C++ compiler flags to append to CXXFLAGS (defaults to '')
 #export ZOPEN_EXTRA_LDFLAGS="" ## C,C++ linker flags to append to LDFLAGS (defaults to '')
@@ -155,7 +155,7 @@ export ZOPEN_EXTRA_CFLAGS="-D__XPLAT=1 -D_POSIX_C_SOURCE=200809L" ## C compiler 
 #export ZOPEN_CLEAN_OPTS="" ## Options to pass to clean up  program (defaults to 'clean')
 #export ZOPEN_CONFIGURE_MINIMAL="" ## Configuration program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
 #export ZOPEN_CONFIGURE_OPTS="" ## Options to pass to configuration program (defaults to '--prefix=')
-export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-shared" ## Extra configure options to pass to configuration program. (defaults to '')
+export ZOPEN_EXTRA_CONFIGURE_OPTS="--enable-shared --enable-devel" ## Extra configure options to pass to configuration program. (defaults to '')
 #export ZOPEN_INSTALL_OPTS="" ## Options to pass to installation program (defaults to 'install')
 #export ZOPEN_MAKE_MINIMAL="" ## Build program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
 #export ZOPEN_MAKE_OPTS="" ## Options to pass to build program (defaults to '-j')
