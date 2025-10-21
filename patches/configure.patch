@@ -1,7 +1,39 @@
 diff --git a/configure b/configure
-index 7a391a2..36d6cca 100755
+index 7a391a2..d9b85f5 100755
 --- a/configure
 +++ b/configure
+@@ -26423,20 +26423,20 @@ if test "x$ac_cv_func_fork_works" = xcross; then
+ printf "%s\n" "$as_me: WARNING: result $ac_cv_func_vfork_works guessed because of cross compilation" >&2;}
+ fi
+ 
+-if test "x$ac_cv_func_vfork_works" = xyes; then
+-
+-printf "%s\n" "#define HAVE_WORKING_VFORK 1" >>confdefs.h
+-
+-else
+-
+-printf "%s\n" "#define vfork fork" >>confdefs.h
++#if test "x$ac_cv_func_vfork_works" = xyes; then
++#
++#printf "%s\n" "#define HAVE_WORKING_VFORK 1" >>confdefs.h
+ 
+-fi
+-if test "x$ac_cv_func_fork_works" = xyes; then
++#else
+ 
+-printf "%s\n" "#define HAVE_WORKING_FORK 1" >>confdefs.h
++#printf "%s\n" "#define vfork fork" >>confdefs.h
+ 
+-fi
++#fi
++#if test "x$ac_cv_func_fork_works" = xyes; then
++#
++#printf "%s\n" "#define HAVE_WORKING_FORK 1" >>confdefs.h
++#
++#fi
+ 
+ 
+ ac_fn_c_check_func "$LINENO" "__syscall" "ac_cv_func___syscall"
 @@ -26569,12 +26569,12 @@ then :
  
  fi
@@ -26,7 +58,7 @@ index 7a391a2..36d6cca 100755
  
  case "$target_cpu" in #(
 -  m68*|x86*|x64|i?86|ppc*|sparc*|alpha*|arm*|aarch*) :
-+  m68*|x86*|x64|i?86|ppc*|sparc*|alpha*|arm*|aarch*|s390x|i370) :
++  m68*|x86*|x64|i?86|ppc*|sparc*|alpha*|arm*|aarch*|i370) :
       dir=-1 ;; #(
    hppa*) :
       dir=+1 ;; #(
