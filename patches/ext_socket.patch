@@ -1,0 +1,149 @@
+diff --git a/ext/socket/extconf.rb b/ext/socket/extconf.rb
+index d44ce31..f220d08 100644
+--- a/ext/socket/extconf.rb
++++ b/ext/socket/extconf.rb
+@@ -1,6 +1,8 @@
+ # frozen_string_literal: false
+ require 'mkmf'
+ 
++$CFLAGS << " -Werror=implicit-function-declaration"
++
+ AF_INET6_SOCKET_CREATION_TEST = <<EOF
+ #include <sys/types.h>
+ #ifndef _WIN32
+diff --git a/ext/socket/ipsocket.c b/ext/socket/ipsocket.c
+index cacacd3..08bdbbd 100644
+--- a/ext/socket/ipsocket.c
++++ b/ext/socket/ipsocket.c
+@@ -996,7 +996,7 @@ init_fast_fallback_inetsock_internal(VALUE v)
+                             resolution_store.v6.finished = true;
+ 
+                             if (arg->getaddrinfo_entries[IPV6_ENTRY_POS]->err &&
+-                                arg->getaddrinfo_entries[IPV6_ENTRY_POS]->err != EAI_ADDRFAMILY) {
++                                arg->getaddrinfo_entries[IPV6_ENTRY_POS]->err != EAI_FAMILY) {
+                                 if (!resolution_store.v4.finished || resolution_store.v4.has_error) {
+                                     last_error.type = RESOLUTION_ERROR;
+                                     last_error.ecode = arg->getaddrinfo_entries[IPV6_ENTRY_POS]->err;
+@@ -1202,8 +1202,8 @@ fast_fallback_inetsock_cleanup(VALUE v)
+        }
+     }
+ 
+-    if (arg->readfds.fdset) rb_fd_term(&arg->readfds);
+-    if (arg->writefds.fdset) rb_fd_term(&arg->writefds);
++    //if (arg->readfds.fdset) rb_fd_term(&arg->readfds);
++    //if (arg->writefds.fdset) rb_fd_term(&arg->writefds);
+ 
+     if (arg->connection_attempt_fds) {
+         free(arg->connection_attempt_fds);
+diff --git a/ext/socket/rubysocket.h b/ext/socket/rubysocket.h
+index b4dcd59..fa6966e 100644
+--- a/ext/socket/rubysocket.h
++++ b/ext/socket/rubysocket.h
+@@ -4,7 +4,7 @@
+ #include "ruby/config.h"
+ #include RUBY_EXTCONF_H
+ 
+-#if defined(__sun) || defined(_AIX)
++#if defined(__sun) || defined(_AIX) || defined(__MVS__)
+ /* (Recent?)  Solaris' <nfs/nfs.h> have conflicting definition of T_DATA.  Let
+  * us honour system definition by undefining ours.
+  *
+diff --git a/ext/socket/socket.c b/ext/socket/socket.c
+index 8f593ca..886180b 100644
+--- a/ext/socket/socket.c
++++ b/ext/socket/socket.c
+@@ -9,6 +9,9 @@
+ ************************************************/
+ 
+ #include "rubysocket.h"
++#include <net/if.h>
++#include <sys/ioctl.h>
++#include "zos-base.h"
+ 
+ static VALUE sym_wait_writable;
+ 
+@@ -1552,7 +1555,74 @@ rsock_sockaddr_obj(struct sockaddr *addr, socklen_t len)
+ static VALUE
+ socket_s_ip_address_list(VALUE self)
+ {
+-#if defined(HAVE_GETIFADDRS)
++#if defined(__MVS__)
++
++#ifndef MAX
++#define MAX(a,b) (((a)>(b))?(a):(b))
++#endif
++#define ADDR_SIZE(p) MAX((p).sa_len, sizeof(p))
++
++    int fd = -1;
++    struct ifconf ifc;
++    struct ifreq *ifr, *p, flg;
++    char *buf = NULL;
++    int bufsize = 16384; /* Start with a reasonable size */
++    VALUE list = Qnil;
++    const char *reason = NULL;
++    int save_errno;
++
++    fd = socket(AF_INET, SOCK_DGRAM, 0);
++    if (fd == -1)
++        rb_sys_fail("socket(2)");
++
++    buf = xmalloc(bufsize);
++    ifc.ifc_req = (struct ifreq *)buf;
++    ifc.ifc_len = bufsize;
++
++    if (ioctl(fd, SIOCGIFCONF, &ifc) == -1) {
++        reason = "SIOCGIFCONF";
++        goto finish;
++    }
++
++    list = rb_ary_new();
++    ifr = ifc.ifc_req;
++    while ((char*)ifr < (char*)ifc.ifc_req + ifc.ifc_len) {
++        p = ifr;
++        ifr = (struct ifreq*)((char*)ifr + sizeof(ifr->ifr_name) + ADDR_SIZE(p->ifr_addr));
++
++        if (!IS_IP_FAMILY(p->ifr_addr.sa_family))
++            continue;
++
++        memcpy(flg.ifr_name, p->ifr_name, sizeof(flg.ifr_name));
++        if (ioctl(fd, SIOCGIFFLAGS, &flg) == -1) {
++            /* Ignore errors, just skip this interface */
++            continue;
++        }
++
++        if (!(flg.ifr_flags & IFF_UP && flg.ifr_flags & IFF_RUNNING))
++            continue;
++
++        rb_ary_push(list, sockaddr_obj(&p->ifr_addr, sockaddr_len(&p->ifr_addr)));
++    }
++
++finish:
++    save_errno = errno;
++    if (buf)
++        xfree(buf);
++    if (fd != -1)
++        close(fd);
++    errno = save_errno;
++
++    if (reason)
++        rb_syserr_fail(save_errno, reason);
++    return list;
++
++#undef ADDR_SIZE
++#ifdef MAX
++#undef MAX
++#endif
++
++#elif defined(HAVE_GETIFADDRS)
+     struct ifaddrs *ifp = NULL;
+     struct ifaddrs *p;
+     int ret;
+@@ -1594,6 +1664,8 @@ socket_s_ip_address_list(VALUE self)
+     freeifaddrs(ifp);
+ 
+     return list;
++
++
+ #elif defined(SIOCGLIFCONF) && defined(SIOCGLIFNUM)
+     /* Solaris if_tcp(7P) */
+     int fd = -1;
