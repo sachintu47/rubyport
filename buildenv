@@ -17,7 +17,7 @@ export ZOPEN_BUILD_LINE="STABLE"
 
 ## Required IF ZOPEN_BUILD_LINE='STABLE'
 export ZOPEN_STABLE_URL="https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR}/ruby-${RUBY_VERSION}.tar.gz"  # Specify the stable build URL (either git or tarball)
-export ZOPEN_STABLE_DEPS="openssl make zoslib libyaml" # Specify the stable build dependencies.
+export ZOPEN_STABLE_DEPS="openssl make zoslib libyaml coreutils grep pkgconfig zlib gawk" # Specify the stable build dependencies.
 
 ## Required IF ZOPEN_BUILD_LINE='DEV'
 export ZOPEN_DEV_URL=""   # Specify the dev build URL
@@ -34,6 +34,8 @@ export ZOPEN_RUNTIME_DEPS=""
 ## Current available prerequisites: zos24 zos25 zos31 procfs (see https://github.com/zopencommunity/meta/blob/main/include/prereq.sh for a current list)
 export ZOPEN_SYSTEM_PREREQ=""
 
+export LD="clang"
+export ZOPEN_SKIP_ZOSLIB_ENV_HOOK="skip"
 
 ###
 ### Build stage control environment variables
@@ -66,9 +68,7 @@ zopen_check_results()
 
 zopen_get_version()
 {
-  # Modify to echo the version of your tool/library
-  # Rather than hardcoding the version, obtain the version by running the tool/library
-  echo "1.0.0"
+  ./ruby --version | awk -F" " '{print $2}'
 }
 
 
@@ -126,9 +126,10 @@ zopen_get_version()
   ## This function runs before the 'install' step of the build is run.
 #}
 
-#zopen_post_install(){
+zopen_post_install(){
   ## This function runs after the 'install' step of the build is run.
-#}
+  chtag -b $1/bin/ruby 
+}
 
 #zopen_pre_patch(){
   ## This function runs before the 'patch' step of the build is run.
@@ -143,11 +144,11 @@ zopen_get_version()
 ### Optional build control variables
 ###
 
-#export ZOPEN_EXTRA_CFLAGS="" ## C compiler flags to append to CFLAGS (defaults to '').
-#export ZOPEN_EXTRA_CPPFLAGS="" ## C,C++ pre-processor flags to append to CPPFLAGS (defaults to '')
+export ZOPEN_EXTRA_CFLAGS="-mzos-target=zosv3r1 -I${ZOPEN_ROOT}/libffi_built/include/" ## C compiler flags to append to CFLAGS (defaults to '').
+export ZOPEN_EXTRA_CPPFLAGS="-D_POSIX_C_SOURCE=200809L -D__XPLAT=1 -D_OPEN_SYS_IF_EXT -D_OPEN_SYS_SOCK_EXT3 -D_OPEN_SYS_SOCK_IPV6" ## C,C++ pre-processor flags to append to CPPFLAGS (defaults to '')
 #export ZOPEN_EXTRA_CXXFLAGS="" ## C++ compiler flags to append to CXXFLAGS (defaults to '')
-#export ZOPEN_EXTRA_LDFLAGS="" ## C,C++ linker flags to append to LDFLAGS (defaults to '')
-#export ZOPEN_EXTRA_LIBS="" ## C,C++ libraries to append to LIBS (defaults to '')
+export ZOPEN_EXTRA_LDFLAGS="-L${ZOPEN_ROOT}/libffi_built/lib" ## C,C++ linker flags to append to LDFLAGS (defaults to '')
+export ZOPEN_EXTRA_LIBS="-lffi" ## C,C++ libraries to append to LIBS (defaults to '')
 #export ZOPEN_BOOTSTRAP_OPTS="" ## Options to pass to bootstrap program (defaults to '')
 #export ZOPEN_CHECK_MINIMAL="" ## Check program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
 #export ZOPEN_CHECK_OPTS="" ## Options to pass to check program (defaults to 'check')
@@ -155,9 +156,9 @@ zopen_get_version()
 #export ZOPEN_CLEAN_OPTS="" ## Options to pass to clean up  program (defaults to 'clean')
 #export ZOPEN_CONFIGURE_MINIMAL="" ## Configuration program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
 #export ZOPEN_CONFIGURE_OPTS="" ## Options to pass to configuration program (defaults to '--prefix=')
-#export ZOPEN_EXTRA_CONFIGURE_OPTS="" ## Extra configure options to pass to configuration program. (defaults to '')
+export ZOPEN_EXTRA_CONFIGURE_OPTS="--disable-shared --disable-dln --disable-yjit --disable-rjit --without-valgrind --with-static-linked-ext" ## Extra configure options to pass to configuration program. (defaults to '')
 #export ZOPEN_INSTALL_OPTS="" ## Options to pass to installation program (defaults to 'install')
-#export ZOPEN_MAKE_MINIMAL="" ## Build program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
+export ZOPEN_MAKE_MINIMAL="yes" ## Build program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
 #export ZOPEN_MAKE_OPTS="" ## Options to pass to build program (defaults to '-j')
 #export ZOPEN_PATCH_DIR="" ## Specify directory from which patches should be applied.
 

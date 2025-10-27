@@ -1,0 +1,21 @@
+diff --git a/vm.c b/vm.c
+index 21e0d6f..8745e5b 100644
+--- a/vm.c
++++ b/vm.c
+@@ -50,6 +50,7 @@
+ 
+ #include "probes.h"
+ #include "probes_helper.h"
++#include <zos.h>
+ 
+ #ifdef RUBY_ASSERT_CRITICAL_SECTION
+ int ruby_assert_critical_section_entered = 0;
+@@ -3811,7 +3812,7 @@ nsdr(VALUE self)
+ {
+     VALUE ary = rb_ary_new();
+ #ifdef HAVE_BACKTRACE
+-#include <execinfo.h>
++//#include <execinfo.h>
+ #define MAX_NATIVE_TRACE 1024
+     static void *trace[MAX_NATIVE_TRACE];
+     int n = (int)backtrace(trace, MAX_NATIVE_TRACE);

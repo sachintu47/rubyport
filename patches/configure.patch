@@ -1,0 +1,37 @@
+diff --git a/configure b/configure
+index 7a391a2..02c7c41 100755
+--- a/configure
++++ b/configure
+@@ -26423,6 +26423,7 @@ if test "x$ac_cv_func_fork_works" = xcross; then
+ printf "%s\n" "$as_me: WARNING: result $ac_cv_func_vfork_works guessed because of cross compilation" >&2;}
+ fi
+ 
++ac_cv_func_vfork_works=no
+ if test "x$ac_cv_func_vfork_works" = xyes; then
+ 
+ printf "%s\n" "#define HAVE_WORKING_VFORK 1" >>confdefs.h
+@@ -26570,6 +26571,7 @@ then :
+ fi
+ 
+ ac_fn_c_check_func "$LINENO" "dladdr" "ac_cv_func_dladdr"
++ac_cv_func_dladdr=no
+ if test "x$ac_cv_func_dladdr" = xyes
+ then :
+   printf "%s\n" "#define HAVE_DLADDR 1" >>confdefs.h
+@@ -27116,6 +27118,7 @@ then :
+ fi
+ 
+ ac_fn_c_check_func "$LINENO" "mmap" "ac_cv_func_mmap"
++ac_cv_func_mmap=no
+ if test "x$ac_cv_func_mmap" = xyes
+ then :
+   printf "%s\n" "#define HAVE_MMAP 1" >>confdefs.h
+@@ -29838,7 +29841,7 @@ then :
+ else $as_nop
+ 
+ case "$target_cpu" in #(
+-  m68*|x86*|x64|i?86|ppc*|sparc*|alpha*|arm*|aarch*) :
++  m68*|x86*|x64|i?86|ppc*|sparc*|alpha*|arm*|aarch*|i370) :
+      dir=-1 ;; #(
+   hppa*) :
+      dir=+1 ;; #(

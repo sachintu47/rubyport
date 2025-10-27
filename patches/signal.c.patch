@@ -1,0 +1,13 @@
+diff --git a/signal.c b/signal.c
+index d644991..9e53c6f 100644
+--- a/signal.c
++++ b/signal.c
+@@ -883,7 +883,7 @@ check_stack_overflow(int sig, const void *addr)
+ #     define CHECK_STACK_OVERFLOW_() check_stack_overflow(sig, FAULT_ADDRESS)
+ #   endif
+ #   define MESSAGE_FAULT_ADDRESS " at %p", FAULT_ADDRESS
+-#   define SIGNAL_FROM_USER_P() ((info)->si_code == SI_USER)
++#   define SIGNAL_FROM_USER_P() 0
+ #   define CHECK_STACK_OVERFLOW() (SIGNAL_FROM_USER_P() ? (void)0 : CHECK_STACK_OVERFLOW_())
+ # endif
+ #else

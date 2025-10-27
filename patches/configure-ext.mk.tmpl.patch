@@ -1,0 +1,13 @@
+diff --git a/template/configure-ext.mk.tmpl b/template/configure-ext.mk.tmpl
+index bc192a3..835cb4e 100644
+--- a/template/configure-ext.mk.tmpl
++++ b/template/configure-ext.mk.tmpl
+@@ -17,7 +17,7 @@ srcdir ||= File.dirname(File.dirname(__FILE__))
+ exts = {}
+ [
+   ["exts", "ext", "--extstatic $(EXTSTATIC)"],
+-  ["gems", ".bundle/gems", "--no-extstatic"],
++  ["gems", ".bundle/gems", "--extstatic $(EXTSTATIC)"],
+ ].each do |t, d, o|
+   exts[t] = [o, Dir.glob("#{srcdir}/#{d}/*/").map {|n| n[(srcdir.size+1)..-2]}]
+ end
