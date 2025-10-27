@@ -1,5 +1,5 @@
 diff --git a/configure b/configure
-index 7a391a2..c05a5ca 100755
+index 7a391a2..02c7c41 100755
 --- a/configure
 +++ b/configure
 @@ -26423,6 +26423,7 @@ if test "x$ac_cv_func_fork_works" = xcross; then
@@ -18,7 +18,15 @@ index 7a391a2..c05a5ca 100755
  if test "x$ac_cv_func_dladdr" = xyes
  then :
    printf "%s\n" "#define HAVE_DLADDR 1" >>confdefs.h
-@@ -29838,7 +29840,7 @@ then :
+@@ -27116,6 +27118,7 @@ then :
+ fi
+ 
+ ac_fn_c_check_func "$LINENO" "mmap" "ac_cv_func_mmap"
++ac_cv_func_mmap=no
+ if test "x$ac_cv_func_mmap" = xyes
+ then :
+   printf "%s\n" "#define HAVE_MMAP 1" >>confdefs.h
+@@ -29838,7 +29841,7 @@ then :
  else $as_nop
  
  case "$target_cpu" in #(
