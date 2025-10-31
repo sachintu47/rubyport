@@ -1,0 +1,45 @@
+diff --git a/ruby.c b/ruby.c
+index d2c168c..d097151 100644
+--- a/ruby.c
++++ b/ruby.c
+@@ -26,6 +26,10 @@
+ # include <dlfcn.h>
+ #endif
+ 
++#if defined(LOAD_RELATIVE) && defined(__MVS__)
++#include <sys/ps.h>
++#endif
++
+ #ifdef HAVE_UNISTD_H
+ # include <unistd.h>
+ #endif
+@@ -656,6 +660,29 @@ runtime_libruby_path(void)
+     }
+     rb_str_resize(fname, 0);
+     return path;
++#elif defined(__MVS__)
++    int token = 0;
++    W_PSPROC buf;
++    char exe_path[PS_PATHBLEN];
++    pid_t pid = getpid();
++
++    memset(&buf, 0, sizeof(buf));
++    buf.ps_pathptr = exe_path;
++    buf.ps_pathlen = sizeof(exe_path);
++
++    while (1) {
++        if ((token = w_getpsent(token, &buf, sizeof(buf))) <= 0)
++            break;
++        if (buf.ps_pid != pid)
++            continue;
++        char real_path[PATH_MAX];
++        if (realpath(exe_path, real_path))
++        {
++            return rb_str_new_cstr(real_path);
++        }
++        break; // Found entry, but realpath failed.
++    }
++    rb_fatal("failed to get executable path on z/OS");
+ #else
+ # error relative load path is not supported on this platform.
+ #endif

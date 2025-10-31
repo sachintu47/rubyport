@@ -156,7 +156,7 @@ export ZOPEN_EXTRA_LIBS="-lffi" ## C,C++ libraries to append to LIBS (defaults t
 #export ZOPEN_CLEAN_OPTS="" ## Options to pass to clean up  program (defaults to 'clean')
 #export ZOPEN_CONFIGURE_MINIMAL="" ## Configuration program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
 #export ZOPEN_CONFIGURE_OPTS="" ## Options to pass to configuration program (defaults to '--prefix=')
-export ZOPEN_EXTRA_CONFIGURE_OPTS="--disable-shared --disable-dln --disable-yjit --disable-rjit --without-valgrind --with-static-linked-ext" ## Extra configure options to pass to configuration program. (defaults to '')
+export ZOPEN_EXTRA_CONFIGURE_OPTS="--disable-shared --disable-dln --disable-yjit --disable-rjit --without-valgrind --with-static-linked-ext=yes --enable-load-relative" ## Extra configure options to pass to configuration program. (defaults to '')
 #export ZOPEN_INSTALL_OPTS="" ## Options to pass to installation program (defaults to 'install')
 export ZOPEN_MAKE_MINIMAL="yes" ## Build program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
 #export ZOPEN_MAKE_OPTS="" ## Options to pass to build program (defaults to '-j')
